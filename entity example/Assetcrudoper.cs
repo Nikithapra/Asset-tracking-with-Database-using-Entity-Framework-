@@ -2,8 +2,10 @@
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
+using System.Xml.Linq;
 
 public class Assetcrudoper
 {
@@ -34,30 +36,74 @@ public class Assetcrudoper
 
             Console.Write("Enter  Asset Type: ");
             item.Ptype = Console.ReadLine();
+                string s2 = item.Ptype;
+                    //validating the input
+                    
+                if (char.IsLower(s2[0]))
+                    {
 
-            Console.Write("Enter Asset Brand: ");
-            item.PBrand = Console.ReadLine();
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Asset Type first letter should be uppercase! try again!");
+                    item.Ptype = Console.ReadLine();
+                    
+                }
+            Console.ResetColor();
+
+           Console.Write("Enter Asset Brand: ");
+           item.PBrand = Console.ReadLine();
+
+           //validating the input
+            if (item.PBrand.Length == 0)
+             {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Asset Brand cannot be an empty field, try again!");
+                    item.PBrand = Console.ReadLine();
+             }
+           Console.ResetColor();
 
             Console.Write("Enter Asset Model: ");
             item.PModel = Console.ReadLine();
+                //validating the input is Null
 
-            Console.WriteLine("Enter the Asset office:(India/Sweden/Germany/Norway) ");
-            item.POffices = Console.ReadLine();
+                if (item.PModel.Length == 0)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Asset Model cannot be an empty field, try again!");
+                    item.PModel = Console.ReadLine();
+                }
+                Console.ResetColor();
+
+              Console.WriteLine("Enter the Asset office:(India/Sweden/Germany/Norway) ");
+              item.POffices = Console.ReadLine();
+               string s1=item.POffices;
+
+                //validating the input field starts with uppercase
+
+                if (char.IsLower(s1[0]))
+
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Asset office first letter starts with Uppercase, try again!");
+                    item.POffices = Console.ReadLine();
+
+                }
+                Console.ResetColor();
 
             Console.WriteLine("Enter Asset Price in USD: ");
             string pri = Console.ReadLine();
             bool isprice = int.TryParse(pri, out int val);
             if (isprice)
-            {
-                item.PPrice = val;
-            }
-            else
-            {
+             {
+                    item.PPrice = val;
+             }
+               
+             else
+             {
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine("Invalid Input!Enter valid number!");
-                break;
-            }
-
+                item.PPrice= int.Parse(Console.ReadLine());
+                }
+                Console.ResetColor();
             //calculating local price based on Currency
             string PCurrency = null;
             float locPrice = 0;
@@ -79,21 +125,38 @@ public class Assetcrudoper
                 item.locPrice = (float)(item.PPrice * 10.68);
             }
             if (item.POffices == "Norway")
-            {
-                item.PCurrency = "NOK";
-                item.locPrice = (float)(item.PPrice * 10.17);
-            }
+             {
+                    item.PCurrency = "NOK";
+                    item.locPrice = (float)(item.PPrice * 10.17);
+             }
+            
+            Console.ResetColor();
 
             Console.WriteLine("Enter Asset Purchase date(YYYY-MM-DD): ");
             string date = Console.ReadLine();
             DateTime dt = Convert.ToDateTime(date);//converting to dateformat
             item.PPurcdate = dt;
+              
+            DateTime parsed;
+             //validating date
+             bool valid = DateTime.TryParseExact(date, "yyyy-mm-dd",
+                                                    CultureInfo.InvariantCulture,
+                                                    DateTimeStyles.None,
+                                                    out parsed);
+                if(!valid)
+                {
+                  Console.ForegroundColor = ConsoleColor.Red;
+                  Console.WriteLine("Invalid format");
+                  string  d= Console.ReadLine();
+                }
 
-            //adding to list items
-            items.Add(item);
+              Console.ResetColor();
+              //adding to list items
+              items.Add(item);
 
-            // Creating object for mydbcontext to refer table in database
-            MyDBContext Context = new MyDBContext();
+              Console.ResetColor();
+              // Creating object for mydbcontext to refer table in database
+              MyDBContext Context = new MyDBContext();
 
             //Adding Assets to Database
             Context.Assetnew1.Add(item);
@@ -124,6 +187,7 @@ public class Assetcrudoper
             var purchasedate = t.PPurcdate;
             var todaydate = DateTime.Now;
             var diffdate = todaydate - purchasedate;
+
 
             //checking condition for 3 years
             if (diffdate.TotalDays >= 915 && diffdate.TotalDays <= 1005) //less than 6months
@@ -227,7 +291,14 @@ public class Assetcrudoper
             string date = Console.ReadLine();
             DateTime dt = Convert.ToDateTime(date);//converting to dateformat
             user.PPurcdate = dt;
-
+             bool IsValid(string date)
+            {
+                DateTime temp;
+                if (DateTime.TryParse(date, out temp))
+                    return (true);
+                else
+                    return (false);
+            }
 
             Console.WriteLine("Enter updated Asset Price in USD: ");
             string pri = Console.ReadLine();
