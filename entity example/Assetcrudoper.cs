@@ -277,29 +277,78 @@ public class Assetcrudoper
 
             Console.Write("Enter Updated Asset Type: ");
             user.Ptype = Console.ReadLine();
+            string s2 = user.Ptype;
+            //validating the input
+
+            if (char.IsLower(s2[0]))
+            {
+
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Asset Type first letter should be uppercase! try again!");
+                user.Ptype = Console.ReadLine();
+
+            }
+            Console.ResetColor();
 
             Console.Write("Enter updated Asset Brand: ");
             user.PBrand = Console.ReadLine();
+            //validating the input
+            if (user.PBrand.Length == 0)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Asset Brand cannot be an empty field, try again!");
+                user.PBrand = Console.ReadLine();
+            }
+            Console.ResetColor();
 
             Console.Write("Enter updated Asset Model: ");
             user.PModel = Console.ReadLine();
+            //validating the input is Null
+
+            if (user.PModel.Length == 0)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Asset Model cannot be an empty field, try again!");
+                user.PModel = Console.ReadLine();
+            }
+            Console.ResetColor();
+
 
             Console.WriteLine("Enter the  updated Asset office:(India/Sweden/Germany/Norway) ");
             user.POffices = Console.ReadLine();
+            string s1 = user.POffices;
+
+            //validating the input field starts with uppercase
+
+            if (char.IsLower(s1[0]))
+
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Asset office first letter starts with Uppercase, try again!");
+                user.POffices = Console.ReadLine();
+
+            }
+            Console.ResetColor();
 
             Console.WriteLine("Enter updated Asset Purchase date(YYYY-MM-DD): ");
             string date = Console.ReadLine();
+
             DateTime dt = Convert.ToDateTime(date);//converting to dateformat
             user.PPurcdate = dt;
-             bool IsValid(string date)
+            DateTime parsed;
+            //validating date
+            bool valid = DateTime.TryParseExact(date, "yyyy-mm-dd",
+                                                   CultureInfo.InvariantCulture,
+                                                   DateTimeStyles.None,
+                                                   out parsed);
+            if (!valid)
             {
-                DateTime temp;
-                if (DateTime.TryParse(date, out temp))
-                    return (true);
-                else
-                    return (false);
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Invalid format");
+                string d = Console.ReadLine();
             }
 
+            Console.ResetColor();
             Console.WriteLine("Enter updated Asset Price in USD: ");
             string pri = Console.ReadLine();
             bool isprice = int.TryParse(pri, out int val);
